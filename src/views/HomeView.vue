@@ -19,7 +19,7 @@
           class="py-2"
           v-if="!searchError && mapboxSearchResults.length === 0"
         >
-          No results match your query, try a different term.
+          No location results match your text, try a different text.
         </p>
         <template v-else>
           <li
