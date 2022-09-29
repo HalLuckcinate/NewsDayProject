@@ -12,6 +12,11 @@
         {{ (Math.round(city.weather.main.temp) - 32) / 2 }}&deg;
       </p>
       <div class="flex gap-2">
+        <!-- <img
+            class="w-[150px] h-auto"
+            :src="`http://openweathermap.org/img/wn/${weatherData.current.weather[0].icon}@2x.png`"
+            alt=""
+          /> -->
         <span class="text-xs">
           Highest:
           {{ (Math.round(city.weather.main.temp_max) - 32) / 2 }}&deg;

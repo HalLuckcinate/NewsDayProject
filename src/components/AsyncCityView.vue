@@ -11,37 +11,65 @@
       </p>
     </div>
     <!-- Weather Overview -->
-    <div class="flex flex-col items-center text-white py-12">
-      <h1 class="text-4xl mb-2">{{ route.params.city }}</h1>
-      <p class="text-sm mb-12">
-        {{
-          new Date(weatherData.currentTime).toLocaleDateString("en-us", {
-            weekday: "short",
-            day: "2-digit",
-            month: "long",
-          })
-        }}
-        {{
-          new Date(weatherData.currentTime).toLocaleTimeString("en-us", {
-            timeStyle: "short",
-          })
-        }}
-      </p>
-      <p class="text-8xl mb-8">
-        {{ (Math.round(weatherData.current.temp) - 32) / 2 }}&deg;C
-      </p>
-      <p>
-        Feels like
-        {{ (Math.round(weatherData.current.feels_like) - 32) / 2 }} &deg;C
-      </p>
-      <p class="capitalize">
-        {{ weatherData.current.weather[0].description }}
-      </p>
-      <img
-        class="w-[150px] h-auto"
-        :src="`http://openweathermap.org/img/wn/${weatherData.current.weather[0].icon}@2x.png`"
-        alt=""
-      />
+    <div class="flex flex-col items-center text-white py-12 w-full">
+      <div>
+        <p class="text-md mb-5 gap-5">
+          {{
+            new Date(weatherData.currentTime).toLocaleDateString("en-us", {
+              weekday: "short",
+              day: "2-digit",
+              month: "long",
+            })
+          }}
+          {{
+            new Date(weatherData.currentTime).toLocaleTimeString("en-us", {
+              timeStyle: "short",
+            })
+          }}
+        </p>
+      </div>
+      <div
+        class="flex md:flex-row flex-col items-center md:px-44 sm:gap-10 md:w-full justify-between"
+      >
+        <div class="flex flex-col items-center">
+          <h1 class="text-4xl mb-2">{{ route.params.city }}</h1>
+
+          <p class="text-8xl mb-8">
+            {{ (Math.round(weatherData.current.temp) - 32) / 2 }}&deg;C
+          </p>
+          <div class="text-lg">
+            <p>
+              Highest Temp:
+              {{ (Math.round(weatherData.daily[0].temp.max) - 32) / 2 }} &deg;C
+            </p>
+            <p>
+              Lowest Temp:
+              {{ (Math.round(weatherData.daily[0].temp.min) - 32) / 2 }} &deg;C
+            </p>
+            <p>Humidity: {{ weatherData.current.humidity }}%</p>
+          </div>
+        </div>
+        <div class="flex flex-col items-center text-center">
+          <p>
+            Feels like
+            {{ (Math.round(weatherData.current.feels_like) - 32) / 2 }} &deg;C
+          </p>
+          <p class="capitalize">
+            {{ weatherData.current.weather[0].description }}
+          </p>
+          <img
+            class="w-[150px] h-auto"
+            :src="`http://openweathermap.org/img/wn/${weatherData.current.weather[0].icon}@2x.png`"
+            alt=""
+          />
+          <div class="flex flex-col">
+            <div>Wind speed: {{ weatherData.current.wind_speed }} meter/s</div>
+            <div>
+              Visability:{{ weatherData.current.visibility / 1000 }} kilometer
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <hr class="border-white border-opacity-10 border w-full" />
@@ -127,7 +155,7 @@ const getWeatherData = async () => {
     const weatherData = await axios.get(
       `https://api.openweathermap.org/data/2.5/onecall?lat=${route.query.lat}&lon=${route.query.lng}&exclude={part}&appid=7efa332cf48aeb9d2d391a51027f1a71&units=imperial`
     );
-
+    console.log(weatherData, 55555);
     // cal current date & time
     const localOffset = new Date().getTimezoneOffset() * 60000;
     const utc = weatherData.data.current.dt * 1000 + localOffset;
