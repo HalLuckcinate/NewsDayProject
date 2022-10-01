@@ -28,8 +28,9 @@
           }}
         </p>
       </div>
+
       <div
-        class="flex md:flex-row flex-col items-center md:px-44 sm:gap-10 md:w-full justify-between"
+        class="flex md:flex-row flex-col items-center px-80 sm:gap-10 md:w-full justify-between"
       >
         <div class="flex flex-col items-center">
           <h1 class="text-4xl mb-2">{{ route.params.city }}</h1>
@@ -38,18 +39,19 @@
             {{ (Math.round(weatherData.current.temp) - 32) / 2 }}&deg;C
           </p>
           <div class="text-lg">
-            <p>
+            <div>
+              <i class="fa-solid fa-temperature-low"></i>
               Highest Temp:
               {{ (Math.round(weatherData.daily[0].temp.max) - 32) / 2 }} &deg;C
-            </p>
-            <p>
+            </div>
+            <div>
               Lowest Temp:
               {{ (Math.round(weatherData.daily[0].temp.min) - 32) / 2 }} &deg;C
-            </p>
+            </div>
             <p>Humidity: {{ weatherData.current.humidity }}%</p>
           </div>
         </div>
-        <div class="flex flex-col items-center text-center">
+        <div class="flex flex-col items-center text-center min-w-[200px]">
           <p>
             Feels like
             {{ (Math.round(weatherData.current.feels_like) - 32) / 2 }} &deg;C
@@ -63,9 +65,20 @@
             alt=""
           />
           <div class="flex flex-col">
-            <div>Wind speed: {{ weatherData.current.wind_speed }} meter/s</div>
+            <div class="inline-block">
+              <i class="fa-solid fa-wind"></i>
+              Wind speed:
+              <span class="underline">{{
+                weatherData.current.wind_speed
+              }}</span>
+              meter/s
+            </div>
             <div>
-              Visability:{{ weatherData.current.visibility / 1000 }} kilometer
+              Visability:
+              <span class="underline">{{
+                weatherData.current.visibility / 1000
+              }}</span>
+              kilometer
             </div>
           </div>
         </div>
