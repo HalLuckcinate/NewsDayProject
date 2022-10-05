@@ -10,6 +10,15 @@
         tracking this city.
       </p>
     </div>
+
+    <!-- Wind Map -->
+
+    <!-- <div class="flex w-full">{{ windMapData }}</div> -->
+    <!-- <img
+      src="https://tile.openweathermap.org/map/wind_new/8/8/8.png?appid=7efa332cf48aeb9d2d391a51027f1a71"
+      alt=""
+      class="w-full h-fit"
+    /> -->
     <!-- Weather Overview -->
     <div class="flex flex-col items-center text-white py-12 w-full">
       <div>
@@ -30,28 +39,33 @@
       </div>
 
       <div
-        class="flex md:flex-row flex-col items-center px-80 sm:gap-10 md:w-full justify-between"
+        class="flex md:flex-row flex-col items-center px-[25%] sm:gap-10 md:w-full justify-between"
       >
-        <div class="flex flex-col items-center">
-          <h1 class="text-4xl mb-2">{{ route.params.city }}</h1>
+        <div class="flex flex-col items-center min-w-[250px]">
+          <h1 class="text-4xl mb-2 text-center">{{ route.params.city }}</h1>
 
           <p class="text-8xl mb-8">
             {{ (Math.round(weatherData.current.temp) - 32) / 2 }}&deg;C
           </p>
           <div class="text-lg">
-            <div>
-              <i class="fa-solid fa-temperature-low"></i>
-              Highest Temp:
-              {{ (Math.round(weatherData.daily[0].temp.max) - 32) / 2 }} &deg;C
+            <div class="flex flex-row justify-between gap-6">
+              <div>
+                <i class="fa-solid fa-temperature-low"></i>
+                Temperature:
+              </div>
+              <div>
+                {{ (Math.round(weatherData.daily[0].temp.max) - 32) / 2 }} /
+                {{ (Math.round(weatherData.daily[0].temp.min) - 32) / 2 }}
+                &deg;C
+              </div>
             </div>
-            <div>
-              Lowest Temp:
-              {{ (Math.round(weatherData.daily[0].temp.min) - 32) / 2 }} &deg;C
-            </div>
+
             <p>Humidity: {{ weatherData.current.humidity }}%</p>
           </div>
         </div>
-        <div class="flex flex-col items-center text-center min-w-[200px]">
+        <div
+          class="flex flex-col items-center text-center min-w-[250px] text-lg"
+        >
           <p>
             Feels like
             {{ (Math.round(weatherData.current.feels_like) - 32) / 2 }} &deg;C
@@ -168,7 +182,7 @@ const getWeatherData = async () => {
     const weatherData = await axios.get(
       `https://api.openweathermap.org/data/2.5/onecall?lat=${route.query.lat}&lon=${route.query.lng}&exclude={part}&appid=7efa332cf48aeb9d2d391a51027f1a71&units=imperial`
     );
-    console.log(weatherData, 55555);
+
     // cal current date & time
     const localOffset = new Date().getTimezoneOffset() * 60000;
     const utc = weatherData.data.current.dt * 1000 + localOffset;
@@ -187,6 +201,19 @@ const getWeatherData = async () => {
   }
 };
 const weatherData = await getWeatherData();
+
+const getWindMapData = async () => {
+  try {
+    const windMapData = await axios.get(
+      `https://tile.openweathermap.org/map/wind_new/8/1/1.png?appid=7efa332cf48aeb9d2d391a51027f1a71`
+    );
+    console.log(windMapData, 5555);
+    return windMapData;
+  } catch (e) {
+    console.log(e);
+  }
+};
+const windMapData = await getWindMapData();
 
 const router = useRouter();
 const removeCity = () => {
