@@ -11,16 +11,12 @@
       </p>
     </div>
 
-    <!-- Wind Map -->
-
-    <!-- <div class="flex w-full">{{ windMapData }}</div> -->
-    <!-- <img
-      src="https://tile.openweathermap.org/map/wind_new/8/8/8.png?appid=7efa332cf48aeb9d2d391a51027f1a71"
-      alt=""
-      class="w-full h-fit"
-    /> -->
     <!-- Weather Overview -->
     <div class="flex flex-col items-center text-white py-12 w-full">
+      <div
+        id="mapid"
+        class="block h-[450px] w-[650px] mb-5 rounded-lg shadow-lg"
+      ></div>
       <div>
         <p class="text-md mb-5 gap-5">
           {{
@@ -48,19 +44,23 @@
             {{ (Math.round(weatherData.current.temp) - 32) / 2 }}&deg;C
           </p>
           <div class="text-lg">
-            <div class="flex flex-row justify-between gap-6">
+            <div class="flex flex-row justify-between gap-2">
               <div>
-                <i class="fa-solid fa-temperature-low"></i>
+                <i class="fa-solid fa-temperature-low text-red-500"></i>
                 Temperature:
               </div>
-              <div>
+              <div class="underline">
                 {{ (Math.round(weatherData.daily[0].temp.max) - 32) / 2 }} /
                 {{ (Math.round(weatherData.daily[0].temp.min) - 32) / 2 }}
                 &deg;C
               </div>
             </div>
 
-            <p>Humidity: {{ weatherData.current.humidity }}%</p>
+            <div class="inline-block">
+              Humidity:
+              <span class="underline"> {{ weatherData.current.humidity }}</span
+              >%
+            </div>
           </div>
         </div>
         <div
@@ -175,7 +175,12 @@
 <script setup>
 import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
+import { onMounted } from "vue";
+import leaflet from "leaflet";
 
+const mapboxAPIKey =
+  "pk.eyJ1Ijoiam9obmtvbWFybmlja2kiLCJhIjoiY2t5NjFzODZvMHJkaDJ1bWx6OGVieGxreSJ9.IpojdT3U3NENknF6_WhR2Q";
+const openweatherAPIKey = "7efa332cf48aeb9d2d391a51027f1a71";
 const route = useRoute();
 const getWeatherData = async () => {
   try {
@@ -201,19 +206,55 @@ const getWeatherData = async () => {
   }
 };
 const weatherData = await getWeatherData();
+let map;
 
-const getWindMapData = async () => {
-  try {
-    const windMapData = await axios.get(
-      `https://tile.openweathermap.org/map/wind_new/8/1/1.png?appid=7efa332cf48aeb9d2d391a51027f1a71`
-    );
-    console.log(windMapData, 5555);
-    return windMapData;
-  } catch (e) {
-    console.log(e);
-  }
-};
-const windMapData = await getWindMapData();
+onMounted(() => {
+  // add tile layers
+
+  const cloudWeatherMap = leaflet.tileLayer(
+    `https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${openweatherAPIKey}`,
+    {}
+  );
+  const seaPressureWeatherMap = leaflet.tileLayer(
+    `https://tile.openweathermap.org/map/pressure_new/{z}/{x}/{y}.png?appid=${openweatherAPIKey}`,
+    {}
+  );
+  const windWeatherMap = leaflet.tileLayer(
+    `https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=${openweatherAPIKey}`,
+    {}
+  );
+  const tempWeatherMap = leaflet.tileLayer(
+    `https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${openweatherAPIKey}`,
+    {}
+  );
+  const roadMap = leaflet.tileLayer(
+    `https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${mapboxAPIKey}`,
+    {
+      maxZoom: 18,
+      id: "mapbox/streets-v11",
+      tileSize: 512,
+      zoomOffset: -1,
+      accessToken: mapboxAPIKey,
+    }
+  );
+  // init map
+
+  map = leaflet
+    .map("mapid", {
+      zoomControl: false,
+      layers: [roadMap],
+    })
+    .setView([route.query.lat, route.query.lng], 10);
+
+  const mapLayers = {
+    "Cloud Map": cloudWeatherMap,
+    "Sea Pressure": seaPressureWeatherMap,
+    "Wind Direction": windWeatherMap,
+    "Temperature Map": tempWeatherMap,
+  };
+
+  leaflet.control.layers(mapLayers).addTo(map);
+});
 
 const router = useRouter();
 const removeCity = () => {
