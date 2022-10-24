@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import CityView from "../views/CityView.vue";
+import MapView from "../views/MapView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,6 +20,14 @@ const router = createRouter({
       component: CityView,
       meta: {
         title: "Weather",
+      },
+    },
+    {
+      path: "/map",
+      name: "mapView",
+      component: MapView,
+      meta: {
+        title: "Map",
       },
     },
   ],

@@ -35,7 +35,7 @@
       </div>
 
       <div
-        class="flex md:flex-row flex-col items-center px-[25%] sm:gap-10 md:w-full justify-between"
+        class="flex md:flex-row flex-col items-center px-[15%] py-[10px] sm:gap-[30px] justify-between border-2 border-teal-600 mx-[25%]"
       >
         <div class="flex flex-col items-center min-w-[250px]">
           <h1 class="text-4xl mb-2 text-center">{{ route.params.city }}</h1>
