@@ -15,7 +15,7 @@
     <div class="flex flex-col items-center text-white py-12 w-full">
       <div
         id="mapid"
-        class="block h-[450px] w-[650px] mb-5 rounded-lg shadow-lg"
+        class="block h-[450px] w-[650px] mb-5 rounded-lg shadow-lg -z-0"
       ></div>
       <div>
         <p class="text-md mb-5 gap-5">
@@ -35,13 +35,17 @@
       </div>
 
       <div
-        class="flex md:flex-row flex-col items-center px-[15%] py-[10px] sm:gap-[30px] justify-between border-2 border-teal-600 mx-[25%]"
+        class="information flex md:flex-row flex-col items-center px-[15%] py-[10px] sm:gap-[30px] justify-between rounded-lg mx-[25%]"
       >
         <div class="flex flex-col items-center min-w-[250px]">
           <h1 class="text-4xl mb-2 text-center">{{ route.params.city }}</h1>
 
           <p class="text-8xl mb-8">
-            {{ (Math.round(weatherData.current.temp) - 32) / 2 }}&deg;C
+            {{
+              ((Math.round(weatherData.current.temp) - 32) * (5 / 9)).toFixed(
+                1
+              )
+            }}&deg;C
           </p>
           <div class="text-lg">
             <div class="flex flex-row justify-between gap-2">
@@ -49,16 +53,27 @@
                 <i class="fa-solid fa-temperature-low text-red-500"></i>
                 Temperature:
               </div>
-              <div class="underline">
-                {{ (Math.round(weatherData.daily[0].temp.max) - 32) / 2 }} /
-                {{ (Math.round(weatherData.daily[0].temp.min) - 32) / 2 }}
+              <div class="">
+                {{
+                  (
+                    (Math.round(weatherData.daily[0].temp.min) - 32) *
+                    (5 / 9)
+                  ).toFixed(1)
+                }}
+                /
+                {{
+                  (
+                    (Math.round(weatherData.daily[0].temp.max) - 32) *
+                    (5 / 9)
+                  ).toFixed(1)
+                }}
                 &deg;C
               </div>
             </div>
 
             <div class="inline-block">
               Humidity:
-              <span class="underline"> {{ weatherData.current.humidity }}</span
+              <span class=""> {{ weatherData.current.humidity }}</span
               >%
             </div>
           </div>
@@ -80,18 +95,15 @@
           />
           <div class="flex flex-col">
             <div class="inline-block">
-              <i class="fa-solid fa-wind"></i>
+              <i class="fa-solid fa-wind text-blue-500"></i>
               Wind speed:
-              <span class="underline">{{
-                weatherData.current.wind_speed
-              }}</span>
+              <span class="">{{ weatherData.current.wind_speed }}</span>
               meter/s
             </div>
             <div>
+              <i class="fa-solid fa-eye"></i>
               Visability:
-              <span class="underline">{{
-                weatherData.current.visibility / 1000
-              }}</span>
+              <span class="">{{ weatherData.current.visibility / 1000 }}</span>
               kilometer
             </div>
           </div>
@@ -102,7 +114,7 @@
     <hr class="border-white border-opacity-10 border w-full" />
 
     <!-- Hourly Weather -->
-    <div class="max-w-screen-md w-full py-12">
+    <div class="information max-w-screen-md w-full py-10 rounded-lg">
       <div class="mx-8 text-white">
         <h2 class="mb-4">Hourly Weather</h2>
         <div class="flex gap-10 overflow-x-scroll">
@@ -124,7 +136,9 @@
               alt=""
             />
             <p class="text-xl">
-              {{ (Math.round(hourData.temp) - 32) / 2 }}&deg;C
+              {{
+                ((Math.round(hourData.temp) - 32) * (5 / 9)).toFixed(1)
+              }}&deg;C
             </p>
           </div>
         </div>
@@ -135,7 +149,7 @@
 
     <!-- Weekly Weather -->
     <div class="max-w-screen-md w-full py-12">
-      <div class="mx-8 text-white">
+      <div class="information mx-8 text-white p-5 rounded-lg">
         <h2 class="mb-4">7 Day Forecast</h2>
         <div
           v-for="day in weatherData.daily"
@@ -155,8 +169,17 @@
             alt=""
           />
           <div class="flex gap-2 flex-1 justify-end">
-            <p>Highest: {{ (Math.round(day.temp.max) - 32) / 2 }}</p>
-            <p>Lowest: {{ (Math.round(day.temp.min) - 32) / 2 }}</p>
+            <div>
+              <i class="fa-solid fa-temperature-low text-red-500"></i>
+              {{
+                ((Math.round(day.temp.min) - 32) * (5 / 9)).toFixed(1)
+              }}&deg;C/
+              {{ ((Math.round(day.temp.max) - 32) * (5 / 9)).toFixed(1) }}&deg;C
+            </div>
+          </div>
+          <div class="flex-1 flex gap-2 justify-end">
+            <i class="fa-solid fa-droplet text-blue-600"></i>
+            Rain: {{ day.rain }} mm
           </div>
         </div>
       </div>
@@ -199,12 +222,13 @@ const getWeatherData = async () => {
       const utc = hour.dt * 1000 + localOffset;
       hour.currentTime = utc + 1000 * weatherData.data.timezone_offset;
     });
-
+    
     return weatherData.data;
   } catch (err) {
     console.log(err);
   }
 };
+
 const weatherData = await getWeatherData();
 let map;
 
@@ -266,3 +290,9 @@ const removeCity = () => {
   });
 };
 </script>
+<style lang="scss" scoped>
+.information {
+  background-color: #0093e9;
+  background-image: linear-gradient(160deg, #0093e9 0%, #71cfac 100%);
+}
+</style>
