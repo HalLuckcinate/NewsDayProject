@@ -5,10 +5,6 @@
     <div class="flex flex-col">
       <h2 class="text-3xl">{{ city.city }}</h2>
       <h3>{{ city.state }}</h3>
-      <h3>
-        <i class="fa-solid fa-wind text-blue-400"></i> Wind Speed:
-        {{ city.weather.wind.speed }} m/s
-      </h3>
     </div>
 
     <div class="flex flex-col items-center">
@@ -22,7 +18,7 @@
       <p class="text-xl">{{ city.weather.weather[0].main }}</p>
     </div>
 
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2 align-middle">
       <div class="text-2xl self-end">
         <i class="fa-solid fa-temperature-low text-red-500"></i>
         {{
@@ -30,10 +26,14 @@
         }}&deg;
       </div>
 
-      <div class="flex flex-row gap-3">
-        <i class="fa-sharp fa-solid fa-droplet-percent"></i>
-        Humidity:
-        <p>{{ city.weather.main.humidity }}%</p>
+      <div class="flex flex-row gap-1 items-center self-end">
+        <i class="fa-solid fa-droplet text-blue-600"></i>
+        Humid:
+        <p>{{ Math.round(city.weather.main.humidity).toFixed(1) }}%</p>
+      </div>
+      <div class="flex gap-1 items-center self-end">
+        <i class="fa-solid fa-wind text-blue-400"></i> Wind:
+        <p>{{ Math.round(city.weather.wind.speed).toFixed(1) }} m/s</p>
       </div>
     </div>
   </div>

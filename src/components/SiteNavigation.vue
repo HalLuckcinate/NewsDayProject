@@ -20,6 +20,11 @@
           @click="addCity"
           v-if="route.query"
         ></i>
+        <RouterLink :to="{ name: 'mapView' }">
+          <div>
+            <i class="fa-solid fa-map-location-dot"></i>
+          </div>
+        </RouterLink>
       </div>
 
       <BaseModal :modalActive="modalActive" @close-modal="toggleModal">
@@ -52,11 +57,6 @@
           </p>
         </div>
       </BaseModal>
-      <RouterLink :to="{ name: 'mapView' }">
-        <div>
-          <i class="fa-solid fa-map-location-dot"></i>
-        </div>
-      </RouterLink>
     </nav>
   </header>
 </template>
@@ -84,8 +84,15 @@ const addCity = () => {
       lng: route.query.lng,
     },
   };
+  const checkCity = savedCities.value.find(
+    (location) => location.city === locationObj.city
+  );
+  if (!checkCity) {
+    savedCities.value.push(locationObj);
+  } else {
+    alert("City already exist in the list");
+  }
 
-  savedCities.value.push(locationObj);
   localStorage.setItem("savedCities", JSON.stringify(savedCities.value));
 
   let query = Object.assign({}, route.query);

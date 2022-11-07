@@ -15,7 +15,7 @@
     <div class="flex flex-col items-center text-white py-12 w-full">
       <div
         id="mapid"
-        class="block h-[450px] w-[650px] mb-5 rounded-lg shadow-lg -z-0"
+        class="block h-[450px] max-w-[650px] w-screen  mb-5 rounded-lg shadow-lg -z-0"
       ></div>
       <div>
         <p class="text-md mb-5 gap-5">
@@ -35,9 +35,9 @@
       </div>
 
       <div
-        class="information flex md:flex-row flex-col items-center px-[15%] py-[10px] sm:gap-[30px] justify-between rounded-lg mx-[25%]"
+        class="information flex md:flex-row flex-col items-center px-[10%] py-[10px] sm:gap-[30px] justify-between rounded-lg mx-[25%] md:w-screen max-w-[885px]"
       >
-        <div class="flex flex-col items-center min-w-[250px]">
+        <div class="flex flex-col items-center ]">
           <h1 class="text-4xl mb-2 text-center">{{ route.params.city }}</h1>
 
           <p class="text-8xl mb-8">
@@ -72,6 +72,7 @@
             </div>
 
             <div class="inline-block">
+              <i class="fa-solid fa-droplet text-blue-600"></i>
               Humidity:
               <span class=""> {{ weatherData.current.humidity }}</span
               >%
@@ -177,9 +178,9 @@
               {{ ((Math.round(day.temp.max) - 32) * (5 / 9)).toFixed(1) }}&deg;C
             </div>
           </div>
-          <div class="flex-1 flex gap-2 justify-end">
+          <div  class="flex-1 flex gap-2 justify-end">
             <i class="fa-solid fa-droplet text-blue-600"></i>
-            Rain: {{ day.rain }} mm
+            Rain: {{ !!day.rain ? day.rain : 0 }} mm
           </div>
         </div>
       </div>
@@ -262,7 +263,6 @@ onMounted(() => {
     }
   );
   // init map
-
   map = leaflet
     .map("mapid", {
       zoomControl: false,
@@ -289,6 +289,9 @@ const removeCity = () => {
     name: "home",
   });
 };
+
+
+
 </script>
 <style lang="scss" scoped>
 .information {
