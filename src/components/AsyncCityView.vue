@@ -15,7 +15,7 @@
     <div class="flex flex-col items-center text-white py-12 w-full">
       <div
         id="mapid"
-        class="block h-[450px] max-w-[650px] w-screen  mb-5 rounded-lg shadow-lg -z-0"
+        class="block h-[450px] max-w-[650px] w-screen mb-5 rounded-lg shadow-lg -z-0"
       ></div>
       <div>
         <p class="text-md mb-5 gap-5">
@@ -178,12 +178,15 @@
               {{ ((Math.round(day.temp.max) - 32) * (5 / 9)).toFixed(1) }}&deg;C
             </div>
           </div>
-          <div  class="flex-1 flex gap-2 justify-end">
+          <div class="flex-1 flex gap-2 justify-end">
             <i class="fa-solid fa-droplet text-blue-600"></i>
             Rain: {{ !!day.rain ? day.rain : 0 }} mm
           </div>
         </div>
       </div>
+    </div>
+    <div class="bg-white !w-screen !h-[550px] rounded-lg">
+      <canvas id="myChart" class=" !max-w-fit !h-[550px]"></canvas>
     </div>
 
     <div
@@ -201,6 +204,7 @@ import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
 import { onMounted } from "vue";
 import leaflet from "leaflet";
+import Chart from "chart.js/auto";
 
 const mapboxAPIKey =
   "pk.eyJ1Ijoiam9obmtvbWFybmlja2kiLCJhIjoiY2t5NjFzODZvMHJkaDJ1bWx6OGVieGxreSJ9.IpojdT3U3NENknF6_WhR2Q";
@@ -223,7 +227,7 @@ const getWeatherData = async () => {
       const utc = hour.dt * 1000 + localOffset;
       hour.currentTime = utc + 1000 * weatherData.data.timezone_offset;
     });
-    
+
     return weatherData.data;
   } catch (err) {
     console.log(err);
@@ -231,9 +235,54 @@ const getWeatherData = async () => {
 };
 
 const weatherData = await getWeatherData();
+
+const dailyDay = weatherData.daily.map((day) =>
+  new Date(day.dt * 1000).toLocaleDateString("en-us", {
+    weekday: "long",
+  })
+);
+const dailyTemp = weatherData.daily.map((temperature) =>
+  ((Math.round(temperature.temp.max) - 32) * (5 / 9)).toFixed(1)
+);
+console.log(dailyTemp, 222);
+
+console.log(weatherData.daily, 99);
 let map;
 
 onMounted(() => {
+  const ctx = document.getElementById("myChart");
+
+  const myChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: dailyDay,
+      datasets: [
+        {
+          label: "Temperature of Week",
+          data: dailyTemp,
+          backgroundColor: [
+            "rgba(255, 99, 132, 1)",
+            "rgba(54, 162, 100, 1)",
+            "rgba(255, 206, 86, 1)",
+            "rgba(75, 192, 192, 1)",
+            "rgba(153, 102, 255, 1)",
+            "rgba(255, 159, 64, 1)",
+          ],
+          borderColor: ["rgba(255, 99, 132, 1)"],
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  });
+  myChart;
+
   // add tile layers
 
   const cloudWeatherMap = leaflet.tileLayer(
@@ -289,9 +338,6 @@ const removeCity = () => {
     name: "home",
   });
 };
-
-
-
 </script>
 <style lang="scss" scoped>
 .information {

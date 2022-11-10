@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col min-h-screen font-Roboto bg-[#1184C2]"
+    class="flex flex-col min-h-screen font-Roboto bg-[#91d5ee]"
   >
     <SiteNavigation />
     <RouterView class="flex-1" v-slot="{ Component }">
