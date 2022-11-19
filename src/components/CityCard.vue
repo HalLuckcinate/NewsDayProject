@@ -1,6 +1,6 @@
 <template>
   <div
-    class="card flex py-6 px-3 bg-weather-secondary rounded-md shadow-md cursor-pointer justify-between"
+    class="card flex py-6 px-3 bg-weather-secondary rounded-md shadow-md cursor-pointer justify-between mb-2"
   >
     <div class="flex flex-col">
       <h2 class="text-3xl">{{ city.city }}</h2>

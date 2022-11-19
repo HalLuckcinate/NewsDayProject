@@ -47,7 +47,7 @@
               )
             }}&deg;C
           </p>
-          <div class="text-lg">
+          <div class="text-lg text-center">
             <div class="flex flex-row justify-between gap-2">
               <div>
                 <i class="fa-solid fa-temperature-low text-red-500"></i>
@@ -86,14 +86,14 @@
             Feels like
             {{ (Math.round(weatherData.current.feels_like) - 32) / 2 }} &deg;C
           </p>
-          <p class="capitalize">
-            {{ weatherData.current.weather[0].description }}
-          </p>
           <img
             class="w-[150px] h-auto"
             :src="`http://openweathermap.org/img/wn/${weatherData.current.weather[0].icon}@2x.png`"
             alt=""
           />
+          <p class="capitalize">
+            {{ weatherData.current.weather[0].description }}
+          </p>
           <div class="flex flex-col">
             <div class="inline-block">
               <i class="fa-solid fa-wind text-blue-500"></i>
@@ -185,8 +185,8 @@
         </div>
       </div>
     </div>
-    <div class="bg-white !w-screen !h-[550px] rounded-lg">
-      <canvas id="myChart" class=" !max-w-fit !h-[550px]"></canvas>
+    <div class="bg-white !w-screen !max-w-[700px] !h-[550px] rounded-lg">
+      <canvas id="myChart" class="!w-screen !max-w-[700px] !h-[550px]"></canvas>
     </div>
 
     <div
@@ -205,6 +205,20 @@ import { useRoute, useRouter } from "vue-router";
 import { onMounted } from "vue";
 import leaflet from "leaflet";
 import Chart from "chart.js/auto";
+import { doc, deleteDoc, getFirestore } from "firebase/firestore";
+import { initializeApp } from "firebase/app";
+
+const firebaseConfig = initializeApp({
+  apiKey: "AIzaSyBu5xYVhh6j3jUsmb_ssmAiM0k590EcnkQ",
+  authDomain: "weatherdaysproject.firebaseapp.com",
+  projectId: "weatherdaysproject",
+  storageBucket: "weatherdaysproject.appspot.com",
+  messagingSenderId: "473677403098",
+  appId: "1:473677403098:web:844e71060624f9ed8326e3",
+  measurementId: "G-VD3BKC9GE3",
+});
+
+const db = getFirestore(firebaseConfig);
 
 const mapboxAPIKey =
   "pk.eyJ1Ijoiam9obmtvbWFybmlja2kiLCJhIjoiY2t5NjFzODZvMHJkaDJ1bWx6OGVieGxreSJ9.IpojdT3U3NENknF6_WhR2Q";
@@ -244,9 +258,7 @@ const dailyDay = weatherData.daily.map((day) =>
 const dailyTemp = weatherData.daily.map((temperature) =>
   ((Math.round(temperature.temp.max) - 32) * (5 / 9)).toFixed(1)
 );
-console.log(dailyTemp, 222);
 
-console.log(weatherData.daily, 99);
 let map;
 
 onMounted(() => {
@@ -330,10 +342,8 @@ onMounted(() => {
 });
 
 const router = useRouter();
-const removeCity = () => {
-  const cities = JSON.parse(localStorage.getItem("savedCities"));
-  const updatedCities = cities.filter((city) => city.id !== route.query.id);
-  localStorage.setItem("savedCities", JSON.stringify(updatedCities));
+const removeCity = async () => {
+  await deleteDoc(doc(db, "cities", route.params.city ));
   router.push({
     name: "home",
   });
