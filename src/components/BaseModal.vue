@@ -8,11 +8,11 @@
         <Transition name="modal-inner">
           <div
             v-if="modalActive"
-            class="p-4 bg-white self-start mt-32 max-w-screen-md"
+            class="p-4 bg-white self-start mt-28 max-w-screen-md rounded-lg"
           >
             <slot />
             <button
-              class="text-white mt-8 bg-weather-primary py-2 px-6"
+              class="text-white mt-8 bg-weather-primary py-2 px-6 rounded-lg"
               @click="$emit('close-modal')"
             >
               Close

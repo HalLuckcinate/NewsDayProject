@@ -1,5 +1,5 @@
 <template>
-  <header class="sticky top-0 bg-[#1164B5] shadow-lg">
+  <header class="sticky top-0 bg-[#1164B5] shadow-lg z-50">
     <nav
       class="container flex flex-col sm:flex-row items-center gap-4 text-white py-6"
     >
@@ -15,11 +15,14 @@
           class="fa-solid fa-circle-info text-xl hover:text-weather-secondary duration-150 cursor-pointer"
           @click="toggleModal"
         ></i>
-        <i
-          class="fa-solid fa-plus text-xl hover:text-weather-secondary duration-150 cursor-pointer"
-          @click="addCity"
-          v-if="route.query"
-        ></i>
+        <div v-if="!!route.params.state || !!route.params.city">
+          <i
+            class="fa-solid fa-plus text-xl hover:text-weather-secondary duration-150 cursor-pointer"
+            @click="addCity"
+            v-if="!!route.query"
+          ></i>
+        </div>
+
         <RouterLink :to="{ name: 'mapView' }">
           <div>
             <i class="fa-solid fa-map-location-dot"></i>
@@ -31,17 +34,18 @@
         <div class="text-black rounded-lg">
           <h1 class="text-2xl mb-1">About:</h1>
           <p class="mb-4">
-            The Local Weather allows you to track the current and future weather
-            of cities of your choosing.
+            The WeatherDays Project will let user allow to track the current and
+            future weather of cities follow users requirement
           </p>
-          <h2 class="text-2xl">How it works:</h2>
+          <h2 class="text-2xl">How to use this application!:</h2>
           <ol class="list-decimal list-inside mb-4">
             <li>
-              Search for your city by entering the name into the search bar.
+              Input city name that you want to search in to the search box to
+              find the city.
             </li>
             <li>
               Select a city within the results, this will take you to the
-              current weather for your selection.
+              current weather page for your selection.
             </li>
             <li>
               Track the city by clicking on the "+" icon in the top right. This
@@ -51,9 +55,8 @@
 
           <h2 class="text-2xl">Removing a city</h2>
           <p>
-            If you no longer wish to track a city, simply select the city within
-            the home page. At the bottom of the page, there will be am option to
-            delete the city.
+            If you want to delete the city that already in the list, you can
+            roll down to the bottom of the page to see the delete function
           </p>
         </div>
       </BaseModal>
@@ -64,16 +67,51 @@
 <script setup>
 import { RouterLink, useRoute, useRouter } from "vue-router";
 import { uid } from "uid";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import BaseModal from "./BaseModal.vue";
+import {
+  doc,
+  setDoc,
+  getFirestore,
+  collection,
+  getDocs,
+} from "firebase/firestore";
+import { initializeApp } from "firebase/app";
 
+const firebaseConfig = initializeApp({
+  apiKey: "AIzaSyBu5xYVhh6j3jUsmb_ssmAiM0k590EcnkQ",
+  authDomain: "weatherdaysproject.firebaseapp.com",
+  projectId: "weatherdaysproject",
+  storageBucket: "weatherdaysproject.appspot.com",
+  messagingSenderId: "473677403098",
+  appId: "1:473677403098:web:844e71060624f9ed8326e3",
+  measurementId: "G-VD3BKC9GE3",
+});
+
+const db = getFirestore(firebaseConfig);
 const savedCities = ref([]);
 const route = useRoute();
 const router = useRouter();
-const addCity = () => {
-  if (localStorage.getItem("savedCities")) {
-    savedCities.value = JSON.parse(localStorage.getItem("savedCities"));
-  }
+
+const addCity = async () => {
+  const storeCity = await setDoc(doc(db, "cities", route.params.city), {
+    state: route.params.state,
+    city: route.params.city,
+    coords: {
+      lat: route.query.lat,
+      lng: route.query.lng,
+    },
+  });
+
+  const getCity = async () => {
+    const getAvailCity = await getDocs(collection(db, "cities"));
+    getAvailCity.forEach((doc) => {
+      savedCities.value.push(doc.data());
+      console.log(doc.data());
+      console.log(savedCities.value, 123123);
+    });
+  };
+  getCity();
 
   const locationObj = {
     id: uid(),
@@ -84,16 +122,9 @@ const addCity = () => {
       lng: route.query.lng,
     },
   };
-  const checkCity = savedCities.value.find(
-    (location) => location.city === locationObj.city
-  );
-  if (!checkCity) {
-    savedCities.value.push(locationObj);
-  } else {
-    alert("City already exist in the list");
-  }
-
-  localStorage.setItem("savedCities", JSON.stringify(savedCities.value));
+  watch(savedCities.value, () => {
+    savedCities.value = savedCities.value;
+  });
 
   let query = Object.assign({}, route.query);
   delete query.preview;

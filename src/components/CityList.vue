@@ -4,8 +4,7 @@
   </div>
 
   <p v-if="savedCities.length === 0">
-    No locations added. To start tracking a location, search in
-    the field above.
+    No locations added. To start tracking a location, search in the field above.
   </p>
 </template>
 
@@ -14,15 +13,34 @@ import axios from "axios";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import CityCard from "./CityCard.vue";
+import {
+  doc,
+  setDoc,
+  getFirestore,
+  collection,
+  getDocs,
+} from "firebase/firestore";
+import { initializeApp } from "firebase/app";
+
+const firebaseConfig = initializeApp({
+  apiKey: "AIzaSyBu5xYVhh6j3jUsmb_ssmAiM0k590EcnkQ",
+  authDomain: "weatherdaysproject.firebaseapp.com",
+  projectId: "weatherdaysproject",
+  storageBucket: "weatherdaysproject.appspot.com",
+  messagingSenderId: "473677403098",
+  appId: "1:473677403098:web:844e71060624f9ed8326e3",
+  measurementId: "G-VD3BKC9GE3",
+});
+const db = getFirestore(firebaseConfig);
 
 const savedCities = ref([]);
-const getCities = async () => {
-  if (localStorage.getItem("savedCities")) {
-    savedCities.value = JSON.parse(
-      localStorage.getItem("savedCities")
-    );
 
-    const requests = [];
+const getCity = async () => {
+  const getAvailCity = await getDocs(collection(db, "cities"));
+  getAvailCity.forEach((doc) => {
+    savedCities.value.push(doc.data());
+  });
+  const requests = [];
     savedCities.value.forEach((city) => {
       requests.push(
         axios.get(
@@ -36,9 +54,8 @@ const getCities = async () => {
     weatherData.forEach((value, index) => {
       savedCities.value[index].weather = value.data;
     });
-  }
 };
-await getCities();
+await getCity();
 
 const router = useRouter();
 const goToCityView = (city) => {
