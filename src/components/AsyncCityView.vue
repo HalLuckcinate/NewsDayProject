@@ -252,8 +252,8 @@ const weatherData = await getWeatherData();
 
 const dailyDay = weatherData.daily.map((day) =>
   new Date(day.dt * 1000).toLocaleDateString("en-us", {
-    weekday: "long",
-  })
+    dateStyle: 'short'
+  })                  
 );
 const dailyTemp = weatherData.daily.map((temperature) =>
   ((Math.round(temperature.temp.max) - 32) * (5 / 9)).toFixed(1)

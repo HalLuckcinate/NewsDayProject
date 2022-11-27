@@ -107,8 +107,6 @@ const addCity = async () => {
     const getAvailCity = await getDocs(collection(db, "cities"));
     getAvailCity.forEach((doc) => {
       savedCities.value.push(doc.data());
-      console.log(doc.data());
-      console.log(savedCities.value, 123123);
     });
   };
   getCity();
