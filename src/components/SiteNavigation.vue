@@ -35,9 +35,9 @@
           <h1 class="text-2xl mb-1">About:</h1>
           <p class="mb-4">
             The WeatherDays Project will let user allow to track the current and
-            future weather of cities follow users requirement
+            future weather of cities follow users requirement.
           </p>
-          <h2 class="text-2xl">How to use this application!:</h2>
+          <h2 class="text-2xl">How to use this application:</h2>
           <ol class="list-decimal list-inside mb-4">
             <li>
               Input city name that you want to search in to the search box to
@@ -56,7 +56,7 @@
           <h2 class="text-2xl">Removing a city</h2>
           <p>
             If you want to delete the city that already in the list, you can
-            roll down to the bottom of the page to see the delete function
+            roll down to the bottom of the page to see the delete function.
           </p>
         </div>
       </BaseModal>
